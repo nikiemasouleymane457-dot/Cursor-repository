@@ -1,23 +1,47 @@
 {
   "name": "faso-livraison-backend",
   "version": "1.0.0",
+  "description": "Backend pour Faso Livraison - application de livraison au Burkina Faso",
   "main": "dist/server.js",
   "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
     "build": "tsc",
-    "start": "node dist/server.js"
+    "start": "node dist/server.js",
+    "prisma:generate": "prisma generate",
+    "prisma:migrate": "prisma migrate dev",
+    "test": "echo \"Error: no test specified\" && exit 1"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nikiemasouleymane457-dot/Cursor-repository.git"
+  },
+  "keywords": ["delivery", "burkina", "faso-livraison"],
+  "author": "Nikiema Souleymane",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nikiemasouleymane457-dot/Cursor-repository/issues"
+  },
+  "homepage": "https://github.com/nikiemasouleymane457-dot/Cursor-repository#readme",
   "dependencies": {
-    "@prisma/client": "^5.18.0",
-    "express": "^4.19.2",
-    "helmet": "^8.0.0" ,
+    "@prisma/client": "^6.16.3",
+    "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5"
+    "dotenv": "^16.4.5",
+    "express": "^4.21.0",
+    "helmet": "^8.0.0",
     "jsonwebtoken": "^9.0.2",
     "morgan": "^1.10.0"
   },
   "devDependencies": {
-    "prisma": "^5.18.0",
-    "typescript": "^5.5.0",
-    "@types/express": "^4.17.21"
+    "@types/bcryptjs": "^2.4.6",
+    "@types/cors": "^2.8.19",
+    "@types/express": "^5.0.3",
+    "@types/jsonwebtoken": "^9.0.10",
+    "@types/morgan": "^1.9.10",
+    "@types/node": "^24.6.2",
+    "prisma": "^6.16.3",
+    "ts-node": "^10.9.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.9.3"
   }
 }
