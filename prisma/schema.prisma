@@ -1,98 +1,41 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
+// prisma/schema.prisma
 generator client {
   provider = "prisma-client-js"
-  output   = "../generated/prisma"
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
 model User {
-  id            String   @id @default(cuid())
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  email         String   @unique
-  firstName     String
-  lastName      String
-  phone         String?
-  role          UserRole @default(CLIENT)
-  passwordHash  String
-  driver        Driver?
-  client        Client?
+  id        String   @id @default(uuid())
+  name      String
+  surname   String
+  email     String   @unique
+  createdAt DateTime @default(now())
+  userType  String   @default("client")
 }
 
-model Driver {
-  id                 String   @id @default(cuid())
-  userId             String   @unique
-  user               User     @relation(fields: [userId], references: [id])
-  nationalIdNumber   String
-  emergencyContact   String
-  emergencyContactPhone String
-  emergencyContactAddress String
-  homeAddress        String
-  isOnline           Boolean  @default(false)
-  vehicleType        String?
-  licensePlate       String?
-  deliveries         Delivery[]
-}
-
-model Client {
-  id        String   @id @default(cuid())
-  userId    String   @unique
-  user      User     @relation(fields: [userId], references: [id])
-  deliveries Delivery[]
+model DeliveryPersonnel {
+  id                    String   @id @default(uuid())
+  name                  String
+  surname               String
+  email                 String   @unique
+  phone                 String
+  familyAddress         String?
+  emergencyContactName  String?
+  emergencyContactPhone String?
+  createdAt             DateTime @default(now())
+  userType              String   @default("delivery")
 }
 
 model TransportCompany {
-  id          String   @id @default(cuid())
-  name        String
-  email       String?  @unique
-  phone       String?
-  description String?
-  city        String? // HQ city, e.g., Ouagadougou
-  routes      TransportRoute[]
-}
-
-model TransportRoute {
-  id            String   @id @default(cuid())
-  companyId     String
-  company       TransportCompany @relation(fields: [companyId], references: [id])
-  originCity    String
-  destinationCity String
-  departureTimes  String? // CSV or JSON text for times
-  daysOfWeek      String? // e.g., Mon,Tue,Wed or JSON
-  priceFrom       Float?
-}
-
-model Delivery {
-  id            String   @id @default(cuid())
+  id            String   @id @default(uuid())
+  companyName   String
+  contactEmail  String?
+  contactPhone  String?
+  routesAvailable String[]
+  available     Boolean  @default(true)
   createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
-  clientId      String
-  client        Client   @relation(fields: [clientId], references: [id])
-  driverId      String?
-  driver        Driver?  @relation(fields: [driverId], references: [id])
-  pickupAddress String
-  dropoffAddress String
-  notes         String?
-  status        DeliveryStatus @default(PENDING)
-  price         Float?
-}
-
-enum UserRole {
-  CLIENT
-  DRIVER
-  ADMIN
-}
-
-enum DeliveryStatus {
-  PENDING
-  ASSIGNED
-  IN_PROGRESS
-  COMPLETED
-  CANCELLED
 }
