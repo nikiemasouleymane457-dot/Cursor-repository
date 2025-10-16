@@ -2,13 +2,47 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import { login, registerClient, registerDriver } from '../services/auth.service';
 
-const clientRegisterSchema = z.object({
-  email: z.string().email(),
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
-  password: z.string().min(6),
-  phone: z.string().optional(),
-});
+const bcrypt = require('bcryptjs');
+
+async function registerClientHandler(req, res) {
+  try {
+    const { email, firstName, lastName, password, phone } = clientRegisterSchema.parse(req.body);
+
+    // Vérifier si l'email existe déjà
+    const existingUser = await prisma.user.findUnique({ where: { email } });
+    if (existingUser) {
+      return res.status(400).json({ error: 'Email déjà utilisé' });
+    }
+
+    // Hacher le mot de passe
+    const saltRounds = 10;
+    const passwordHash = await bcrypt.hash(password, saltRounds);
+
+    // Créer l'utilisateur avec passwordHash
+    const user = await prisma.user.create({
+      data: {
+        email,
+        firstName,
+        lastName,
+        phone,
+        passwordHash,        // ← crucial : pas "password"
+        role: 'CLIENT',
+      },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+      },
+    });
+
+    return res.status(201).json({ message: 'Client inscrit avec succès', user });
+  } catch (error) {
+    console.error('Erreur inscription client:', error);
+    return res.status(500).json({ error: 'Erreur serveur' });
+  }
+}
 
 const driverRegisterSchema = z.object({
   email: z.string().email(),
