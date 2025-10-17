@@ -1,3 +1,4 @@
+import { prisma } from '../config/prisma';
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import { login, registerClient, registerDriver } from '../services/auth.service';
