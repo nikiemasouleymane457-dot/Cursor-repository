@@ -1,0 +1,69 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  email     String   @unique
+  firstName String
+  lastName  String
+  phone     String?
+  role      Role
+
+  courier   CourierProfile?
+  company   CompanyProfile?
+}
+
+model CourierProfile {
+  id                     String   @id @default(cuid())
+  user                   User     @relation(fields: [userId], references: [id])
+  userId                 String   @unique
+
+  identityNumber         String?
+  familyContactName      String?
+  familyContactPhone     String?
+  familyContactAddress   String?
+  region                 String?
+  city                   String?
+  vehicleType            String?
+  licenseNumber          String?
+  isAvailable            Boolean  @default(false)
+  lastActiveAt           DateTime @default(now())
+}
+
+model CompanyProfile {
+  id         String   @id @default(cuid())
+  user       User     @relation(fields: [userId], references: [id])
+  userId     String   @unique
+
+  companyName String
+  address     String?
+  routes      TransportRoute[]
+}
+
+model TransportRoute {
+  id         String   @id @default(cuid())
+  company    CompanyProfile @relation(fields: [companyId], references: [id])
+  companyId  String
+
+  fromCity   String
+  toCity     String
+  departure  String?  // e.g., "08:00", "Soir"
+  days       String?  // e.g., "Lun,Mer,Ven"
+  priceFca   Int?     // Prix en FCFA (optionnel)
+  createdAt  DateTime @default(now())
+}
+
+enum Role {
+  CLIENT
+  LIVREUR
+  SOCIETE
+}
