@@ -7,7 +7,7 @@ const bcrypt = require('bcryptjs');
 
 async function registerClientHandler(req, res) {
   try {
-    const { email, firstName, lastName, password, phone } = clientRegisterSchema.parse(req.body);
+    const { email, Name, surName, password, phone } = clientRegisterSchema.parse(req.body);
 
     // Vérifier si l'email existe déjà
     const existingUser = await prisma.user.findUnique({ where: { email } });
@@ -23,8 +23,8 @@ async function registerClientHandler(req, res) {
     const user = await prisma.user.create({
       data: {
         email,
-        firstName,
-        lastName,
+        Name,
+        surName,
         phone,
         passwordHash,        // ← crucial : pas "password"
         role: 'CLIENT',
@@ -32,8 +32,8 @@ async function registerClientHandler(req, res) {
       select: {
         id: true,
         email: true,
-        firstName: true,
-        lastName: true,
+        Name: true,
+        surName: true,
         role: true,
       },
     });
@@ -47,8 +47,8 @@ async function registerClientHandler(req, res) {
 
 const driverRegisterSchema = z.object({
   email: z.string().email(),
-  firstName: z.string().min(1),
-  lastName: z.string().min(1),
+  Name: z.string().min(1),
+  surName: z.string().min(1),
   password: z.string().min(6),
   phone: z.string().min(6),
   nationalIdNumber: z.string().min(4),
